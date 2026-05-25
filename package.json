@@ -1,0 +1,16 @@
+{
+  "name": "crucix-cn-lite",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "中文情报终端（快速版）：加密/黄金/美股/A股/地缘/供应链/行业情报 + Telegram 告警",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
