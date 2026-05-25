@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crucix 中文快速版</title>
+  <style>
+    :root { --bg:#081018; --panel:#101b2a; --text:#d8e6ff; --muted:#8ea3c7; --up:#4ade80; --down:#f87171; }
+    body{margin:0;font-family:"Microsoft YaHei",sans-serif;background:linear-gradient(180deg,#07101b,#03070d);color:var(--text)}
+    .wrap{max-width:1200px;margin:0 auto;padding:20px}
+    .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+    .card{background:var(--panel);border:1px solid #1f2e45;border-radius:12px;padding:14px}
+    h1{margin:0 0 8px;font-size:26px} h2{margin:0 0 10px;font-size:18px}
+    .muted{color:var(--muted);font-size:13px} .up{color:var(--up)} .down{color:var(--down)}
+    ul{margin:0;padding-left:16px} li{margin:6px 0} a{color:#7bc4ff;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Crucix 中文快速版</h1>
+    <div class="muted">监控：加密货币、黄金/原油期货、美股、A股、地缘、供应链、行业情报 | 自动刷新</div>
+    <div id="app" class="grid" style="margin-top:14px"></div>
+  </div>
+<script>
+function fmt(n){return typeof n==='number'?n.toFixed(2):'--'}
+function priceRow(x){const c=(x.changePct||0)>=0?'up':'down';return `<li>${x.name} (${x.key}): ${fmt(x.price)} <span class="${c}">${fmt(x.changePct)}%</span></li>`}
+function newsBlock(title,list){return `<div class="card"><h2>${title}</h2><ul>${list.map(i=>`<li><a target="_blank" href="${i.link}">${i.title}</a></li>`).join('')}</ul></div>`}
+async function render(){
+  const r=await fetch('/api/data'); const d=await r.json();
+  const app=document.getElementById('app');
+  app.innerHTML = `
+    <div class="card"><h2>价格监控</h2><ul>${d.prices.map(priceRow).join('')}</ul></div>
+    ${newsBlock('地缘情报', d.intel.geopolitical || [])}
+    ${newsBlock('供应链情报', d.intel.supplyChain || [])}
+    ${newsBlock('行业情报', d.intel.industryIntel || [])}
+    <div class="card"><h2>系统状态</h2><div>最近扫描：${d.updatedAt || '--'}</div><div>告警阈值：${d.thresholdPct}%</div></div>
+  `;
+}
+render(); setInterval(render, 60000);
+</script>
+</body>
+</html>
